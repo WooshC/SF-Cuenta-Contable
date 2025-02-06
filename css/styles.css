@@ -1,6 +1,10 @@
 /* Estilos generales */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 20px;
+    display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
@@ -10,33 +14,45 @@ h1 {
     color: #333;
     text-align: center;
     margin-bottom: 20px;
+    font-size: 2.5em;
 }
 
 /* Contenedor principal */
 .container {
     width: 100%;
-    max-width: 100%; /* Puedes ajustar este valor según sea necesario */
+    max-width: 1200px;
     background-color: white;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
-    overflow-x: auto; /* Permite el desplazamiento horizontal si la tabla es demasiado ancha */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
 }
 
 /* Contenedor de botones */
 .file-upload {
     display: flex;
     justify-content: center;
+    gap: 10px;
     margin-bottom: 20px;
 }
 
-input[type="file"] {
-    padding: 10px;
-    font-size: 16px;
-    background-color: #e7e7e7;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    border: none;
     cursor: pointer;
+    font-size: 16px;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:focus {
+    outline: none;
 }
 
 /* Estilos para la tabla */
@@ -44,34 +60,27 @@ table {
     width: 100%;
     margin-top: 20px;
     border-collapse: collapse;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
 }
 
 th, td {
-    padding: 10px;
+    padding: 12px;
     text-align: left;
     border: 1px solid #ddd;
 }
 
 th {
-    background-color: #f2f2f2;
-}
-
-button {
-    background-color: #4CAF50;
+    background-color: #007BFF;
     color: white;
-    padding: 5px 10px;
-    border: none;
-    cursor: pointer;
-    font-size: 14px;
-    border-radius: 4px;
+    font-weight: bold;
 }
 
-button:hover {
-    background-color: #45a049;
+tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
 
-button:focus {
-    outline: none;
+tr:hover {
+    background-color: #f1f1f1;
 }
 
 /* Estilos para el formulario de edición */

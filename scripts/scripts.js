@@ -165,3 +165,68 @@ function updateData() {
 function cancelEdit() {
     document.getElementById('editForm').style.display = 'none';
 }
+
+
+
+function downloadXML() {
+    const table = document.getElementById("dataTable");
+    const rows = table.getElementsByTagName("tr");
+    let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<Facturas>\n';
+
+    for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        xmlContent += '  <Factura>\n';
+        xmlContent += `    <FechaEmision>${cells[0].innerText}</FechaEmision>\n`;
+        xmlContent += `    <RazonSocial>${cells[1].innerText}</RazonSocial>\n`;
+        xmlContent += `    <RUC>${cells[2].innerText}</RUC>\n`;
+        xmlContent += `    <BaseImponible>${cells[3].innerText}</BaseImponible>\n`;
+        xmlContent += `    <ImporteTotal>${cells[4].innerText}</ImporteTotal>\n`;
+        xmlContent += `    <IVACalculado>${cells[5].innerText}</IVACalculado>\n`;
+        xmlContent += `    <NumeroAutorizacion>${cells[6].innerText}</NumeroAutorizacion>\n`;
+        xmlContent += '  </Factura>\n';
+    }
+
+    xmlContent += '</Facturas>';
+
+    const blob = new Blob([xmlContent], { type: 'application/xml' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "facturas.xml";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
+
+function downloadExcel() {
+    const table = document.getElementById("dataTable");
+    const rows = table.querySelectorAll("tr");
+    const data = [];
+
+    // Recorrer las filas de la tabla
+    rows.forEach((row, index) => {
+        const rowData = [];
+        const cells = row.querySelectorAll("th, td");
+
+        cells.forEach((cell) => {
+            rowData.push(cell.innerText);
+        });
+
+        // Ignorar la fila de encabezado si es la primera
+        if (index !== 0) {
+            data.push(rowData);
+        }
+    });
+
+    // Crear un libro de trabajo y una hoja
+    const workbook = XLSX.utils.book_new();
+    const worksheet = XLSX.utils.aoa_to_sheet(data);
+
+    // Agregar la hoja al libro de trabajo
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Facturas");
+
+    // Escribir el archivo y descargarlo
+    XLSX.writeFile(workbook, "facturas.xlsx");
+}
