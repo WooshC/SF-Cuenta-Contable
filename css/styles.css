@@ -1,0 +1,113 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+h1 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Contenedor principal */
+.container {
+    width: 100%;
+    max-width: 100%; /* Puedes ajustar este valor según sea necesario */
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    overflow-x: auto; /* Permite el desplazamiento horizontal si la tabla es demasiado ancha */
+}
+
+/* Contenedor de botones */
+.file-upload {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+input[type="file"] {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #e7e7e7;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* Estilos para la tabla */
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+button:focus {
+    outline: none;
+}
+
+/* Estilos para el formulario de edición */
+#editForm {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 600px;
+    margin-top: 20px;
+}
+
+#editForm form {
+    display: flex;
+    flex-direction: column;
+}
+
+#editForm label {
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+#editForm input {
+    padding: 10px;
+    margin-bottom: 12px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+#editForm button {
+    background-color: #007BFF;
+    margin-top: 10px;
+}
+
+#editForm button[type="button"] {
+    background-color: #f44336;
+}

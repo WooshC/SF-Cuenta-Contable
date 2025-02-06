@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Extracción de Datos XML</title>
+  <!-- Vinculación al archivo de estilos externos -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<h1>Módulo contable</h1>
+
+<!-- Contenedor principal -->
+<div class="container">
+  <!-- Sección para cargar XML -->
+  <div class="file-upload">
+    <!-- Botón para seleccionar carpeta -->
+    <button onclick="chooseFolder()">Seleccionar Carpeta</button>
+
+    <!-- Botón para seleccionar múltiples archivos XML -->
+    <button onclick="chooseFiles()">Seleccionar Archivos XML</button>
+
+    <!-- Input oculto para seleccionar una carpeta -->
+    <input type="file" id="folderInput" accept=".xml" style="display:none" webkitdirectory onchange="extractData()">
+
+    <!-- Input oculto para seleccionar múltiples archivos -->
+    <input type="file" id="filesInput" accept=".xml" style="display:none" multiple onchange="extractData()">
+  </div>
+
+  <!-- Tabla para mostrar los datos -->
+  <table id="dataTable" style="width:100%; display:none;">
+    <thead>
+    <tr>
+      <th>Fecha de Emisión</th>
+      <th>Razón Social</th>
+      <th>RUC</th>
+      <th>Base Imponible</th>
+      <th>Importe Total</th>
+      <th>IVA Calculado</th>
+      <th>Número de Autorización</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody id="tableBody">
+    <!-- Las filas se llenarán con los datos extraídos -->
+    </tbody>
+  </table>
+
+  <!-- Formulario para editar los datos -->
+  <div id="editForm" style="display:none;">
+    <h3>Editar Datos</h3>
+    <form id="editDataForm">
+      <label for="fechaEmisionEdit">Fecha de Emisión</label>
+      <input type="text" id="fechaEmisionEdit" name="fechaEmision">
+
+      <label for="razonSocialEdit">Razón Social</label>
+      <input type="text" id="razonSocialEdit" name="razonSocial">
+
+      <label for="rucEdit">RUC</label>
+      <input type="text" id="rucEdit" name="ruc">
+
+      <label for="baseImponibleEdit">Base Imponible</label>
+      <input type="number" id="baseImponibleEdit" name="baseImponible">
+
+      <label for="importeTotalEdit">Importe Total</label>
+      <input type="number" id="importeTotalEdit" name="importeTotal">
+
+      <label for="ivaEdit">IVA Calculado</label>
+      <input type="number" id="ivaEdit" name="iva">
+
+      <label for="numeroAutorizacionEdit">Número de Autorización</label>
+      <input type="text" id="numeroAutorizacionEdit" name="numeroAutorizacion">
+
+      <button type="button" onclick="updateData()">Actualizar Datos</button>
+      <button type="button" onclick="cancelEdit()">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<!-- Vinculación al archivo de scripts externos -->
+<script src="scripts/scripts.js"></script>
+</body>
+</html>
