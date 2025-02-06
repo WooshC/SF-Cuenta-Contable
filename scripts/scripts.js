@@ -11,7 +11,6 @@ function chooseFiles() {
     document.getElementById('filesInput').click();
 }
 
-// Función para extraer los datos del XML
 function extractData() {
     const folderInput = document.getElementById('folderInput');
     const filesInput = document.getElementById('filesInput');
@@ -26,10 +25,10 @@ function extractData() {
         const file = files[i];
         const reader = new FileReader();
 
-        reader.onload = function(event) {
+        reader.onload = function (event) {
             const xmlInput = event.target.result;
 
-            // Expresiones regulares para extraer los datos
+            // Expresiones regulares para extraer los datos principales
             const regexFechaEmision = /<fechaEmision>(.*?)<\/fechaEmision>/;
             const regexRazonSocial = /<razonSocial>(.*?)<\/razonSocial>/;
             const regexRuc = /<ruc>(.*?)<\/ruc>/;
@@ -53,8 +52,18 @@ function extractData() {
             // Marcar el número de autorización como procesado
             processedAuthNumbers.add(numeroAutorizacion);
 
-            // Calcular el IVA
-            const iva = ((importeTotal - baseImponible) / baseImponible * 100).toFixed(2);
+
+
+            // Extraer los detalles de los productos
+            const regexDetalles = /<detalle>.*?<descripcion>(.*?)<\/descripcion>.*?<precioUnitario>(.*?)<\/precioUnitario>.*?<\/detalle>/gs;
+            let detalles = [];
+            let match;
+            while ((match = regexDetalles.exec(xmlInput)) !== null) {
+                detalles.push({
+                    descripcion: match[1].trim(),
+                    precioUnitario: parseFloat(match[2].trim()).toFixed(2)
+                });
+            }
 
             // Almacenar los datos agrupados por razón social
             if (!currentData[razonSocial]) {
@@ -67,8 +76,8 @@ function extractData() {
                 ruc,
                 baseImponible: baseImponible.toFixed(2),
                 importeTotal: importeTotal.toFixed(2),
-                iva,
-                numeroAutorizacion
+                numeroAutorizacion,
+                detalles
             });
 
             // Mostrar los datos agrupados
@@ -79,7 +88,6 @@ function extractData() {
     }
 }
 
-// Función para mostrar los datos agrupados en la tabla
 function displayTable() {
     const tableBody = document.getElementById('tableBody');
     const dataTable = document.getElementById('dataTable');
@@ -90,20 +98,36 @@ function displayTable() {
         const group = currentData[razonSocial];
 
         // Crear una fila para la razón social
-        let groupRow = `<tr><td colspan="8" style="font-weight: bold;">${razonSocial}</td></tr>`;
+        let groupRow = `<tr><td colspan="10" style="font-weight: bold;">${razonSocial}</td></tr>`;
 
         // Agregar cada factura bajo esa razón social
         group.forEach(data => {
+            // Agregar una fila por cada producto
+            data.detalles.forEach((detalle, index) => {
+                groupRow += `
+                <tr>
+                  ${index === 0 ? `
+                    <td rowspan="${data.detalles.length}">${data.fechaEmision}</td>
+                    <td rowspan="${data.detalles.length}">${data.razonSocial}</td>
+                    <td rowspan="${data.detalles.length}">${data.ruc}</td>
+                  ` : ''}
+                  <td>${detalle.descripcion}</td>
+                  <td>${detalle.precioUnitario}</td>
+                  ${index === 0 ? `
+                    <td rowspan="${data.detalles.length}">${data.baseImponible}</td>
+                    <td rowspan="${data.detalles.length}">${data.importeTotal}</td>
+                    <td rowspan="${data.detalles.length}">${data.numeroAutorizacion}</td>
+                  ` : ''}
+                </tr>
+              `;
+            });
+
+            // Agregar una fila para el total de la factura
             groupRow += `
             <tr>
-              <td>${data.fechaEmision}</td>
-              <td>${data.razonSocial}</td>
-              <td>${data.ruc}</td>
-              <td>${data.baseImponible}</td>
+              <td colspan="4" style="text-align: right; font-weight: bold;">Total:</td>
               <td>${data.importeTotal}</td>
-              <td>${data.iva}</td>
-              <td>${data.numeroAutorizacion}</td>
-              <td><button onclick="editData('${data.ruc}')">Editar</button></td>
+              <td colspan="5"></td>
             </tr>
           `;
         });
@@ -114,115 +138,75 @@ function displayTable() {
     dataTable.style.display = 'table';
 }
 
-// Función para mostrar el formulario de edición (modificada para usar RUC como identificador)
-function editData(ruc) {
-    const group = currentData;
-
-    // Buscar la factura a editar usando el RUC
-    let selectedData;
-    for (let razonSocial in group) {
-        selectedData = group[razonSocial].find(item => item.ruc === ruc);
-        if (selectedData) break;
-    }
-
-    // Rellenar el formulario con los datos de la factura seleccionada
-    document.getElementById('editForm').style.display = 'block';
-    document.getElementById('fechaEmisionEdit').value = selectedData.fechaEmision;
-    document.getElementById('razonSocialEdit').value = selectedData.razonSocial;
-    document.getElementById('rucEdit').value = selectedData.ruc;
-    document.getElementById('baseImponibleEdit').value = selectedData.baseImponible;
-    document.getElementById('importeTotalEdit').value = selectedData.importeTotal;
-    document.getElementById('ivaEdit').value = selectedData.iva;
-    document.getElementById('numeroAutorizacionEdit').value = selectedData.numeroAutorizacion;
-}
-
-// Función para actualizar los datos
-function updateData() {
-    // Obtener el RUC y buscar la factura correspondiente
-    const ruc = document.getElementById('rucEdit').value;
-    let selectedData;
-    for (let razonSocial in currentData) {
-        selectedData = currentData[razonSocial].find(item => item.ruc === ruc);
-        if (selectedData) break;
-    }
-
-    // Actualizar los datos
-    selectedData.fechaEmision = document.getElementById('fechaEmisionEdit').value;
-    selectedData.razonSocial = document.getElementById('razonSocialEdit').value;
-    selectedData.baseImponible = parseFloat(document.getElementById('baseImponibleEdit').value).toFixed(2);
-    selectedData.importeTotal = parseFloat(document.getElementById('importeTotalEdit').value).toFixed(2);
-    selectedData.iva = document.getElementById('ivaEdit').value;
-    selectedData.numeroAutorizacion = document.getElementById('numeroAutorizacionEdit').value;
-
-    // Volver a mostrar la tabla con los datos actualizados
-    displayTable();
-
-    // Ocultar el formulario de edición
-    document.getElementById('editForm').style.display = 'none';
-}
-
-// Función para cancelar la edición
-function cancelEdit() {
-    document.getElementById('editForm').style.display = 'none';
-}
-
-
-
-function downloadXML() {
-    const table = document.getElementById("dataTable");
-    const rows = table.getElementsByTagName("tr");
-    let xmlContent = '<?xml version="1.0" encoding="UTF-8"?>\n<Facturas>\n';
-
-    for (let i = 1; i < rows.length; i++) {
-        const cells = rows[i].getElementsByTagName("td");
-        xmlContent += '  <Factura>\n';
-        xmlContent += `    <FechaEmision>${cells[0].innerText}</FechaEmision>\n`;
-        xmlContent += `    <RazonSocial>${cells[1].innerText}</RazonSocial>\n`;
-        xmlContent += `    <RUC>${cells[2].innerText}</RUC>\n`;
-        xmlContent += `    <BaseImponible>${cells[3].innerText}</BaseImponible>\n`;
-        xmlContent += `    <ImporteTotal>${cells[4].innerText}</ImporteTotal>\n`;
-        xmlContent += `    <IVACalculado>${cells[5].innerText}</IVACalculado>\n`;
-        xmlContent += `    <NumeroAutorizacion>${cells[6].innerText}</NumeroAutorizacion>\n`;
-        xmlContent += '  </Factura>\n';
-    }
-
-    xmlContent += '</Facturas>';
-
-    const blob = new Blob([xmlContent], { type: 'application/xml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "facturas.xml";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-}
-
-
 function downloadExcel() {
-    const table = document.getElementById("dataTable");
-    const rows = table.querySelectorAll("tr");
-    const data = [];
-
-    // Recorrer las filas de la tabla
-    rows.forEach((row, index) => {
-        const rowData = [];
-        const cells = row.querySelectorAll("th, td");
-
-        cells.forEach((cell) => {
-            rowData.push(cell.innerText);
-        });
-
-        // Ignorar la fila de encabezado si es la primera
-        if (index !== 0) {
-            data.push(rowData);
-        }
-    });
-
-    // Crear un libro de trabajo y una hoja
     const workbook = XLSX.utils.book_new();
-    const worksheet = XLSX.utils.aoa_to_sheet(data);
+    const worksheetData = [];
+
+    // Encabezados de la tabla
+    const headers = [
+        "Fecha de Emisión",
+        "Razón Social",
+        "RUC",
+        "Descripción",
+        "Valor",
+        "Base Imponible",
+        "Importe Total",
+        "Número de Autorización"
+    ];
+    worksheetData.push(headers);
+
+    // Recorrer cada razón social y agregar sus datos
+    for (let razonSocial in currentData) {
+        const group = currentData[razonSocial];
+
+        // Agregar una fila para la razón social (encabezado de grupo)
+        worksheetData.push([razonSocial, "", "", "", "", "", "", ""]);
+
+        // Agregar cada factura bajo esa razón social
+        group.forEach(data => {
+            // Agregar una fila por cada producto
+            data.detalles.forEach((detalle, index) => {
+                const row = [
+                    index === 0 ? data.fechaEmision : "", // Fecha de emisión solo en la primera fila
+                    index === 0 ? data.razonSocial : "",  // Razón social solo en la primera fila
+                    index === 0 ? data.ruc : "",          // RUC solo en la primera fila
+                    detalle.descripcion,                  // Descripción del producto
+                    detalle.precioUnitario,               // Valor del producto
+                    index === 0 ? data.baseImponible : "", // Base imponible solo en la primera fila
+                    index === 0 ? data.importeTotal : "",  // Importe total solo en la primera fila
+                    index === 0 ? data.numeroAutorizacion : "" // Número de autorización solo en la primera fila
+                ];
+                worksheetData.push(row);
+            });
+
+            // Agregar una fila para el total de la factura
+            worksheetData.push(["", "", "", "", "Total:", data.importeTotal, "", ""]);
+        });
+    }
+
+    // Crear la hoja de trabajo
+    const worksheet = XLSX.utils.aoa_to_sheet(worksheetData);
+
+    // Aplicar estilos a los encabezados y totales
+    const range = XLSX.utils.decode_range(worksheet['!ref']);
+    for (let R = range.s.r; R <= range.e.r; ++R) {
+        for (let C = range.s.c; C <= range.e.c; ++C) {
+            const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+            const cell = worksheet[cellAddress];
+
+            if (R === 0) {
+                // Estilo para los encabezados
+                if (!cell.s) cell.s = {};
+                cell.s.font = { bold: true };
+                cell.s.fill = { fgColor: { rgb: "D3D3D3" } }; // Fondo gris
+            } else if (worksheetData[R][C] === "Total:") {
+                // Estilo para las filas de total
+                if (!cell.s) cell.s = {};
+                cell.s.font = { bold: true };
+                cell.s.fill = { fgColor: { rgb: "F0F0F0" } }; // Fondo gris claro
+            }
+        }
+    }
 
     // Agregar la hoja al libro de trabajo
     XLSX.utils.book_append_sheet(workbook, worksheet, "Facturas");

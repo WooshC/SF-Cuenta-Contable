@@ -31,11 +31,11 @@
           <th>Fecha de Emisión</th>
           <th>Razón Social</th>
           <th>RUC</th>
+          <th>Descriopcion</th>
+          <th>Valor</th>
           <th>Base Imponible</th>
           <th>Importe Total</th>
-          <th>IVA Calculado</th>
           <th>Número de Autorización</th>
-          <th>Acciones</th>
         </tr>
       </thead>
       <tbody id="tableBody">
@@ -62,14 +62,8 @@
         <label for="importeTotalEdit">Importe Total</label>
         <input type="number" id="importeTotalEdit" name="importeTotal">
 
-        <label for="ivaEdit">IVA Calculado</label>
-        <input type="number" id="ivaEdit" name="iva">
-
         <label for="numeroAutorizacionEdit">Número de Autorización</label>
         <input type="text" id="numeroAutorizacionEdit" name="numeroAutorizacion">
-
-        <button type="button" onclick="updateData()">Actualizar Datos</button>
-        <button type="button" onclick="cancelEdit()">Cancelar</button>
       </form>
     </div>
   </div>
