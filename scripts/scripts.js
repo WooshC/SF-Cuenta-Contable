@@ -115,7 +115,6 @@ function displayTable() {
                   <td>${detalle.precioUnitario}</td>
                   ${index === 0 ? `
                     <td rowspan="${data.detalles.length}">${data.baseImponible}</td>
-                    <td rowspan="${data.detalles.length}">${data.importeTotal}</td>
                     <td rowspan="${data.detalles.length}">${data.numeroAutorizacion}</td>
                   ` : ''}
                 </tr>
@@ -150,7 +149,6 @@ function downloadExcel() {
         "Descripción",
         "Valor",
         "Base Imponible",
-        "Importe Total",
         "Número de Autorización"
     ];
     worksheetData.push(headers);
@@ -173,7 +171,6 @@ function downloadExcel() {
                     detalle.descripcion,                  // Descripción del producto
                     detalle.precioUnitario,               // Valor del producto
                     index === 0 ? data.baseImponible : "", // Base imponible solo en la primera fila
-                    index === 0 ? data.importeTotal : "",  // Importe total solo en la primera fila
                     index === 0 ? data.numeroAutorizacion : "" // Número de autorización solo en la primera fila
                 ];
                 worksheetData.push(row);
