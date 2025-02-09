@@ -170,7 +170,6 @@ function downloadExcel() {
                     index === 0 ? data.ruc : "",          // RUC solo en la primera fila
                     detalle.descripcion,                  // Descripción del producto
                     detalle.precioUnitario,               // Valor del producto
-                    index === 0 ? data.baseImponible : "", // Base imponible solo en la primera fila
                     index === 0 ? data.numeroAutorizacion : "" // Número de autorización solo en la primera fila
                 ];
                 worksheetData.push(row);
@@ -189,6 +188,9 @@ function downloadExcel() {
     for (let R = range.s.r; R <= range.e.r; ++R) {
         for (let C = range.s.c; C <= range.e.c; ++C) {
             const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
+            if (!worksheet[cellAddress]) {
+                worksheet[cellAddress] = {}; // Initialize the cell if it doesn't exist
+            }
             const cell = worksheet[cellAddress];
 
             if (R === 0) {
