@@ -96,10 +96,8 @@ function displayTable() {
     // Recorrer cada razón social y agregar sus datos en la tabla
     for (let razonSocial in currentData) {
         const group = currentData[razonSocial];
-
         // Crear una fila para la razón social
         let groupRow = `<tr><td colspan="10" style="font-weight: bold;">${razonSocial}</td></tr>`;
-
         // Agregar cada factura bajo esa razón social
         group.forEach(data => {
             // Agregar una fila por cada producto
@@ -159,7 +157,7 @@ function downloadExcel() {
         const group = currentData[razonSocial];
 
         // Agregar una fila para la razón social (encabezado de grupo)
-        worksheetData.push([razonSocial, "", "", "", "", "", "", ""]);
+        worksheetData.push(["", "", "", "", "", "", ""]);
 
         // Agregar cada factura bajo esa razón social
         group.forEach(data => {
